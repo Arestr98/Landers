@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using API.DTOs;
+using API.RequestHelpers;
+using API.Extensions;
 
 namespace API.Controllers
 {
@@ -24,11 +26,23 @@ namespace API.Controllers
 
         }
 
-        [HttpGet]
+        /* [HttpGet]
         public async Task<ActionResult<List<Product>>> Getproducts()
         {
             return await _context.Products.ToListAsync();
+        } */
+
+        [HttpGet]
+        public async Task<ActionResult<List<Product>>> GetProducts([FromQuery] ProductParams productParams)
+        {
+            return await _context.Products
+                .Sort(productParams.Ordenar)
+                .SearchName(productParams.Buscar)
+                .SearchDesc(productParams.Buscar)
+                .Filter(productParams.Categoria)
+                .ToListAsync();
         }
+
 
         [HttpGet("{id}", Name = "GetProduct")]
         public async Task<ActionResult<Product>> GetProduct(int id)
@@ -39,6 +53,8 @@ namespace API.Controllers
 
             return product;
         }
+
+
 
 
         [HttpPost]
@@ -54,6 +70,22 @@ namespace API.Controllers
 
             if (result) return CreatedAtRoute("GetProduct", new { Id = product.Id }, product);
             return BadRequest(new ProblemDetails { Title = "Problem creating new product" });
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<Product>> UpdateProduct([FromForm] UpdateProductDto productDto)
+        {
+            var product = await _context.Products.FindAsync(productDto.Id);
+
+            if (product == null) return NotFound();
+
+            _mapper.Map(productDto, product);
+
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result) return Ok(product);
+
+            return BadRequest(new ProblemDetails { Title = "Problem updating product" });
         }
 
         [HttpDelete("{id}")]
