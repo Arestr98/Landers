@@ -7,6 +7,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
+using API.RequestHelpers;
+using AutoMapper;
+
 
 namespace API
 {
@@ -24,6 +27,7 @@ namespace API
         {
 
             services.AddControllers();
+            services.AddAutoMapper(typeof(MappingProfiles));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPIv5", Version = "v1" });
