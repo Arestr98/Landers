@@ -56,17 +56,18 @@ namespace API.Controllers
 
 
 
-
         [HttpPost]
         public async Task<ActionResult<Product>> CreateProduct([FromForm] CreateProductDto productDto)
         {
             var product = _mapper.Map<Product>(productDto);
 
+            var checkname = await _context.Products.Where(x => x.Nombre == product.Nombre).ToListAsync() == null;
+            if (checkname) return BadRequest(new ProblemDetails { Title = "Nombre repetido" });
+
+
             _context.Products.Add(product);
 
             var result = await _context.SaveChangesAsync() > 0;
-            Console.WriteLine("print");
-            Console.WriteLine(result);
 
             if (result) return CreatedAtRoute("GetProduct", new { Id = product.Id }, product);
             return BadRequest(new ProblemDetails { Title = "Problem creating new product" });
