@@ -13,9 +13,7 @@ using API.Extensions;
 
 namespace API.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ProductsController : ControllerBase
+    public class ProductsController : BaseApiController
     {
         private readonly StoreContext _context;
         private readonly IMapper _mapper;
@@ -62,6 +60,7 @@ namespace API.Controllers
             var product = _mapper.Map<Product>(productDto);
 
             var checkname = await _context.Products.Where(x => x.Nombre == product.Nombre).ToListAsync() == null;
+            Console.WriteLine(checkname);
             if (checkname) return BadRequest(new ProblemDetails { Title = "Nombre repetido" });
 
 

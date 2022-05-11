@@ -2,6 +2,7 @@
 import { Avatar, Button, Card, CardActions, CardContent, CardHeader, CardMedia, Typography } from "@mui/material";
 import { Product } from "../../app/models/product";
 import { LoadingButton } from '@mui/lab';
+import { Link } from "react-router-dom";
 
 interface Props {
     product: Product
@@ -29,7 +30,7 @@ export default function ProductCard({ product }: Props) {
             />
             <CardContent>
                 <Typography gutterBottom color='secondary' variant="h5">
-                    {product.precio}
+                    ${(product.precio / 1000).toFixed(3)}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                      {product.categoria}
@@ -40,7 +41,7 @@ export default function ProductCard({ product }: Props) {
                     size="small">
                     Eliminar
                 </LoadingButton>
-                <Button size="small">Editar</Button>
+                <Button component={Link} to={`/catalog/${product.id}`} size="small">Ver</Button>
             </CardActions>
         </Card>
     )
